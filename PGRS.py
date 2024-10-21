@@ -9,56 +9,56 @@ from email.mime.multipart import MIMEMultipart
 # Database connection
 conn = mysql.connector.connect(
     host='localhost',
-        user='SUMIT',
-            password='Sumit@280104',
-                database='GrievanceSystem'
-                )
-                cursor = conn.cursor()
+    user='SUMIT',
+    password='Sumit@280104',
+    database='GrievanceSystem'
+)
+cursor = conn.cursor()
 
-                # Function to send email notifications
-                def send_email(receiver_email, subject, body):
-                    sender_email = "sc905735@gmail.com"
-                        sender_password = "#Sumit@01"
+# Function to send email notifications
+def send_email(receiver_email, subject, body):
+    sender_email = "sc905735@gmail.com"
+    sender_password = "#Sumit@01"
 
-                            # Setup of the MIME
-                                msg = MIMEMultipart()
-                                    msg['From'] = sender_email
-                                        msg['To'] = receiver_email
-                                            msg['Subject'] = subject
+# Setup of the MIME
+msg = MIMEMultipart()
+msg['From'] = sender_email
+msg['To'] = receiver_email
+msg['Subject'] = subject
 
-                                                # Body of the email
-                                                    msg.attach(MIMEText(body, 'plain'))
+# Body of the email
+msg.attach(MIMEText(body, 'plain'))
 
-                                                        # Sending the email
-                                                            try:
-                                                                    server = smtplib.SMTP('smtp.gmail.com', 587)
-                                                                            server.starttls()
-                                                                                    server.login(sender_email, sender_password)
-                                                                                            text = msg.as_string()
-                                                                                                    server.sendmail(sender_email, receiver_email, text)
-                                                                                                            server.quit()
-                                                                                                                except Exception as e:
-                                                                                                                        messagebox.showwarning("Error", f"Failed to send email: {str(e)}")
+# Sending the email
+try:
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login(sender_email, sender_password)
+    text = msg.as_string()
+    server.sendmail(sender_email, receiver_email, text)
+    server.quit()
+except Exception as e:
+    messagebox.showwarning("Error", f"Failed to send email: {str(e)}")
 
-                                                                                                                        # Function to register a new user
-                                                                                                                        def register():
-                                                                                                                            name = name_entry.get()
-                                                                                                                                email = email_entry.get()
-                                                                                                                                    password = password_entry.get()
+# Function to register a new user
+def register():
+    name = name_entry.get()
+    email = email_entry.get()
+    password = password_entry.get()
 
-                                                                                                                                        if name and email and password:
-                                                                                                                                                hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-                                                                                                                                                        try:
-                                                                                                                                                                    cursor.execute("INSERT INTO users (name, email, password) VALUES (%s, %s, %s)", (name, email, hashed_password))
-                                                                                                                                                                                conn.commit()
-                                                                                                                                                                                            messagebox.showinfo("Success", "Registration successful!")
-                                                                                                                                                                                                        send_email(email, "Registration Successful", "Welcome to the Grievance Redressal System.")
-                                                                                                                                                                                                                except mysql.connector.Error as err:
-                                                                                                                                                                                                                            messagebox.showwarning("Error", f"Error: {err}")
-                                                                                                                                                                                                                                else:
-                                                                                                                                                                                                                                        messagebox.showwarning("Input Error", "Please fill in all fields.")
+    if name and email and password:
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        try:
+            cursor.execute("INSERT INTO users (name, email, password) VALUES (%s, %s, %s)", (name, email, hashed_password))
+            conn.commit()
+            messagebox.showinfo("Success", "Registration successful!")
+            send_email(email, "Registration Successful", "Welcome to the Grievance Redressal System.")
+        except mysql.connector.Error as err:
+            messagebox.showwarning("Error", f"Error: {err}")
+    else:
+        messagebox.showwarning("Input Error", "Please fill in all fields.")
 
-                                                                                                                                                                                                                                        # Function to authenticate user login
+# Function to authenticate user login
                                                                                                                                                                                                                                         def login():
                                                                                                                                                                                                                                             email = email_entry.get()
                                                                                                                                                                                                                                                 password = password_entry.get()
